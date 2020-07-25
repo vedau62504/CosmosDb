@@ -58,6 +58,7 @@ namespace CosmosConsoleApp1
             this.cosmosClient = new CosmosClient(EndpointUri, PrimaryKey);
             await this.CreateDatabaseAsync();
             await this.CreateContainerAsync();
+            await this.AddItemstoContainerAsync();
         }
 
         // Create the database if it does not exist
@@ -118,6 +119,58 @@ namespace CosmosConsoleApp1
 
                 // Note that after creating the item, we can access the body of the item with the Resource property of the ItemResponse. We can also access the RequestCharge property to see the amount of RUs consumed on this request.
                 Console.WriteLine("Created item in database with id: {0} Operation consumed {1} RUs.\n.", leFamilyResponse.Resource.Id, leFamilyResponse.RequestCharge);
+
+            }
+            // Create a family object for the Nguyen family
+
+            Family nguyenFamily = new Family
+            {
+                Id = "Nguyen.2",
+                LastName = "Nguyen",
+                Parents = new Parent[]
+                {
+                    new Parent {FamilyName = "Nguyen", FirstName = "Tuoi"},
+                    new Parent {FamilyName = "Tran", FirstName = "Lunar"}
+                },
+
+                Children = new Child[]
+                {
+                    new Child
+                    {
+                        FamilyName = "Jake",
+                        FirstName = "Le",
+                        Gender = "male",
+                        Grade = 1,
+                        Pets = new Pet[]
+                        {
+                            new Pet {GivenName = "Goofy"},
+                            new Pet {GivenName = "Monster"}
+                        }
+                    },
+                    new Child
+                    {
+                        FamilyName = "Miller",
+                        FirstName = "Lisa",
+                        Gender = "female",
+                        Grade = 12
+                    }
+                },
+                Address = new Address { State = "MD", County = "PG", City = "Beltsville" },
+                IsRegistered = true
+            };
+
+            try
+            {
+                // Read the item to see if it exists
+                ItemResponse<Family> nguyenFamilyResponse = await this.container.ReadItemAsync<Family>(nguyenFamily.Id, new PartitionKey(nguyenFamily.LastName));
+                Console.WriteLine("Item in database with id: {0} already exists\n", nguyenFamilyResponse.Resource.Id);
+
+            }
+            catch(CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+            {
+                // Create an iten in the container representing in the Nguyen Family.
+                ItemResponse<Family> nguyenFamilyResponse = await this.container.CreateItemAsync<Family>(nguyenFamily, new PartitionKey(nguyenFamily.LastName));
+                Console.WriteLine("Created item in database with id: {0} Operation consumed {1} RUs. \n", nguyenFamilyResponse.Resource.Id, nguyenFamilyResponse.RequestCharge);
 
             }
         }
