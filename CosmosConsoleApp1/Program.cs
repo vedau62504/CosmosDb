@@ -86,13 +86,14 @@ namespace CosmosConsoleApp1
                 LastName = "Le",
                 Parents = new Parent[]
                 {
-                    new Parent {FirstName = "Tho"},
-                    new Parent {FirstName = "Anny"}
+                    new Parent {FamilyName = "Le", FirstName = "Tho"},
+                    new Parent {FamilyName = "Nguyen", FirstName = "Anny"}
                 },
                 Children = new Child[]
                 {
                     new Child
                     {
+                        FamilyName = "Le",
                         FirstName = "Olivia",
                         Gender = "female",
                         Grade = 2,
