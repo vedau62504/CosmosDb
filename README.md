@@ -3,14 +3,13 @@ CosmosDb
 
 This tutorial covers:
 
-Creating and connecting to an Azure Cosmos account
-Configuring your project in Visual Studio
-Creating a database and a container
-Adding items to the container
-Querying the container
-Performing create, read, update, and delete (CRUD) operations on the item
-Deleting the database
-Don't have time? Don't worry! The complete solution is available on GitHub. Jump to the Get the complete tutorial solution section for quick instructions.
+#Creating and connecting to an Azure Cosmos account
+#Configuring your project in Visual Studio
+#Creating a database and a container
+#Adding items to the container
+#Querying the container
+#Performing create, read, update, and delete (CRUD) operations on the item
+#Deleting the database
 
 Now let's get started!
 
