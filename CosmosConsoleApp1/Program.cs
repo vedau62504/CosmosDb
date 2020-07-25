@@ -57,6 +57,7 @@ namespace CosmosConsoleApp1
             // Create a new instance of the Cosmos Client
             this.cosmosClient = new CosmosClient(EndpointUri, PrimaryKey);
             await this.CreateDatabaseAsync();
+            await this.CreateContainerAsync();
         }
 
         // Create the database if it does not exist
@@ -64,6 +65,14 @@ namespace CosmosConsoleApp1
         {
             this.database = await this.cosmosClient.CreateDatabaseIfNotExistsAsync(databaseid);
             Console.WriteLine("Create Database:{0}\n", this.database.Id);
+        }
+
+        // Create the container if it does not exist.
+
+        private async Task CreateContainerAsync()
+        {
+            this.container = await this.database.CreateContainerIfNotExistsAsync(containerid, "/LastName");
+            Console.WriteLine("Created Container: {0}\n", this.container.Id);
         }
     }
 }
