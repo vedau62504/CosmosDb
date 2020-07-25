@@ -74,5 +74,52 @@ namespace CosmosConsoleApp1
             this.container = await this.database.CreateContainerIfNotExistsAsync(containerid, "/LastName");
             Console.WriteLine("Created Container: {0}\n", this.container.Id);
         }
+
+        // Add family items to the container
+        private async Task AddItemstoContainerAsync()
+        {
+            // Create a family object for the Le family
+            Family leFamily = new Family
+            {
+                Id = "Le.1",
+                LastName = "Le",
+                Parents = new Parent[]
+                {
+                    new Parent {FirstName = "Tho"},
+                    new Parent {FirstName = "Anny"}
+                },
+                Children = new Child[]
+                {
+                    new Child
+                    {
+                        FirstName = "Olivia",
+                        Gender = "female",
+                        Grade = 2,
+                        Pets = new Pet[]
+                        {
+                            new Pet {GivenName = "Fluffy"}
+                        }
+                    }
+                },
+                Address = new Address { State = "VA", County = "Loudoun", City = "Chantilly" },
+                IsRegistered = false
+            };
+
+            try
+            {
+                // Read the item to see if it exists
+                ItemResponse<Family> leFamilyResponse = await this.container.ReadItemAsync<Family>(leFamily.Id, new PartitionKey(leFamily.LastName));
+                Console.WriteLine("Item in database with id: {0} already exists\n", leFamilyResponse.Resource.Id);
+            }
+            catch(CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+            {
+                // Create an item in the container representing the Le Family. Note we provide the value of the partition key for this item, which is "Le"
+                ItemResponse<Family> leFamilyResponse = await this.container.CreateItemAsync<Family>(leFamily, new PartitionKey(leFamily.LastName));
+
+                // Note that after creating the item, we can access the body of the item with the Resource property of the ItemResponse. We can also access the RequestCharge property to see the amount of RUs consumed on this request.
+                Console.WriteLine("Created item in database with id: {0} Operation consumed {1} RUs.\n.", leFamilyResponse.Resource.Id, leFamilyResponse.RequestCharge);
+
+            }
+        }
     }
 }
