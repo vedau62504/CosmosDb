@@ -8,7 +8,7 @@ using Microsoft.Azure.Cosmos;
 namespace CosmosConsoleApp1
 {
    
-    public class Program
+    class Program
     {
         // The Azure Cosmos DB endpoint for running this sample.
         private static readonly string EndpointUri = "https://cognitiveservices.documents.azure.com:443/";
@@ -26,23 +26,24 @@ namespace CosmosConsoleApp1
 
         // The name of the database and container we will create
         private string databaseid = "FamilyDatabase";
+        private string containerid = "FamilyContainer";
 
         public static async Task Main(string[] args)
         {
             try
             {
-                Console.WriteLine("Beginning operations... \n");
+                Console.WriteLine("Beginning operations...");
                 Program p = new Program();
                 await p.GetStartedDemoAsync();
             }
             catch (CosmosException de)
             {
                 Exception baseException = de.GetBaseException();
-                Console.WriteLine("{0} error occurred: { 1}", de.StatusCode, de);
+                Console.WriteLine("{0} error occurred: { 1}\n", de.StatusCode, de);
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error: {0}", e);
+                Console.WriteLine("Error: {0}\n", e);
             }
             finally
             {
@@ -53,9 +54,16 @@ namespace CosmosConsoleApp1
 
         public async Task GetStartedDemoAsync()
         {
+            // Create a new instance of the Cosmos Client
             this.cosmosClient = new CosmosClient(EndpointUri, PrimaryKey);
+            await this.CreateDatabaseAsync();
         }
 
-
+        // Create the database if it does not exist
+        private async Task CreateDatabaseAsync()
+        {
+            this.database = await this.cosmosClient.CreateDatabaseIfNotExistsAsync(databaseid);
+            Console.WriteLine("Create Database:{0}\n", this.database.Id);
+        }
     }
 }
